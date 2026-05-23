@@ -9,9 +9,7 @@ import SwiftUI
 
 struct EquipmentView: View {
     @Environment(GameData.self) var gameData
-    
     @Binding var currentGameState: GameState
-    // 紀錄目前被玩家點擊查看的裝備
     @State private var selectedItem: Int = 0
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 40), count: 3)
@@ -25,10 +23,7 @@ struct EquipmentView: View {
                     .padding(.horizontal, 40)
                     .padding(.top, 20)
                 
-                // --- 裝備區塊 (左右分欄) ---
                 HStack(spacing: 30) {
-                    
-                    // 【左欄：玩家擁有的物品清單】
                     VStack {
                         Text("ITEMS")
                             .font(.system(size: 36, weight: .bold, design: .monospaced))
@@ -38,9 +33,11 @@ struct EquipmentView: View {
                             ForEach(0..<6, id: \.self) { i in
                                 if i >= gameData.shopItems.count {
                                     EmptyItemCard()
-                                }
-                                else {
+                                } else {
                                     ItemCard(item: gameData.shopItems[i], equipped: gameData.equippedItem, selected: i == selectedItem)
+                                        .onTapGesture {
+                                            selectedItem = i
+                                        }
                                 }
                             }
                         }
@@ -49,10 +46,9 @@ struct EquipmentView: View {
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)
-                    .background(Color(white: 0.85)) // 淺灰底
+                    .background(Color(white: 0.85))
                     .cornerRadius(10)
                     .shadow(radius: 3)
-                    
                     
                     VStack(spacing: 15) {
                         if selectedItem < gameData.shopItems.count {
@@ -76,21 +72,30 @@ struct EquipmentView: View {
                             }
                             
                             Spacer()
-                            //
-                            //                            Button(action: {
-                            //                                if gameData.equippedItem == itemDetails.name {
-                            //                                    gameData.equippedItem = "None"
-                            //                                } else {
-                            //                                    gameData.equippedItem = itemDetails.name
-                            //                                }
-                            //                            }) {
-                            //                                Text(gameData.equippedItem == itemDetails.name ? "UNEQUIP" : "EQUIP")
-                            //                                    .font(.system(size: 24, weight: .bold, design: .monospaced))
-                            //                                    .frame(width: 200, height: 60)
-                            //                                    .background(Color.black)
-                            //                                    .foregroundColor(.white)
-                            //                                    .cornerRadius(8)
-                            //                            }
+                            
+                            if itemDetails.lv == 0 {
+                                Text("LOCKED")
+                                    .font(.system(size: 24, weight: .bold, design: .monospaced))
+                                    .frame(width: 200, height: 60)
+                                    .background(Color.gray)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                            } else {
+                                Button(action: {
+                                    if gameData.equippedItem == itemDetails.name {
+                                        gameData.equippedItem = "None"
+                                    } else {
+                                        gameData.equippedItem = itemDetails.name
+                                    }
+                                }) {
+                                    Text(gameData.equippedItem == itemDetails.name ? "UNEQUIP" : "EQUIP")
+                                        .font(.system(size: 24, weight: .bold, design: .monospaced))
+                                        .frame(width: 200, height: 60)
+                                        .background(Color.black)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
+                                }
+                            }
                         }
                     }
                     .padding(.top, 30)
@@ -98,7 +103,6 @@ struct EquipmentView: View {
                     .background(Color(white: 0.85))
                     .cornerRadius(10)
                     .shadow(radius: 3)
-                    
                 }
                 .padding(.horizontal, 40)
                 .padding(.bottom, 30)
@@ -107,16 +111,14 @@ struct EquipmentView: View {
     }
 }
 
-
 struct ItemCard: View {
     let item: ShopItem
     let equipped: String
-    
     let selected: Bool
     
     var status: String {
         if item.lv == 0 {
-            return "Unlock"
+            return "Locked"
         }
         return item.name == equipped ? "Equipped" : "Unequipped"
     }
@@ -147,17 +149,16 @@ struct ItemCard: View {
     }
 }
 
-// 空白裝備欄位
 struct EmptyItemCard: View {
     var body: some View {
         VStack {
             Spacer()
-            Text("Unequipped")
+            Text("Empty")
                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 25)
-                .background(Color(white: 0.4))
+                .background(Color(white: 0.7))
         }
         .frame(height: 250)
         .background(Color(white: 0.9))

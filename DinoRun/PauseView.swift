@@ -9,11 +9,11 @@ import SwiftUI
 
 struct PauseView: View {
     @Binding var currentGameState: GameState
-    @Binding var isPaused: Bool // 控制遊戲是否暫停
+    @Binding var isPaused: Bool
+    var onRestart: () -> Void
     
     var body: some View {
         ZStack {
-            // 半透明遮罩
             Color.black.opacity(0.6).ignoresSafeArea()
             
             VStack(spacing: 40) {
@@ -23,19 +23,16 @@ struct PauseView: View {
                     .shadow(radius: 5)
                 
                 HStack(spacing: 30) {
-                    // 回首頁按鈕
                     IconButton(iconName: "house.fill") {
-                        isPaused = false // 確保解除暫停狀態
+                        isPaused = false
                         currentGameState = .home
                     }
                     
-                    // 重新開始按鈕
                     IconButton(iconName: "arrow.clockwise") {
-                        // 這裡未來可以加入重置遊戲的邏輯
                         isPaused = false
+                        onRestart()
                     }
                     
-                    // 繼續遊戲按鈕
                     IconButton(iconName: "play.fill") {
                         isPaused = false
                     }
@@ -49,7 +46,6 @@ struct PauseView: View {
     }
 }
 
-// 可重複使用的圖示按鈕元件
 struct IconButton: View {
     var iconName: String
     var action: () -> Void
@@ -67,7 +63,6 @@ struct IconButton: View {
     }
 }
 
-// 預覽
-#Preview(traits: .landscapeLeft) {
-    PauseView(currentGameState: .constant(.playing), isPaused: .constant(true))
-}
+//#Preview(traits: .landscapeLeft) {
+//    PauseView(currentGameState: .constant(.playing), isPaused: .constant(true))
+//}

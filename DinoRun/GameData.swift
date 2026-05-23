@@ -49,4 +49,25 @@ class GameData {
             maxLv: 5
         )
     ]
+    
+    func buyOrUpgradeItem(at index: Int) {
+        guard index < shopItems.count else { return }
+        let item = shopItems[index]
+        guard item.lv < item.maxLv else { return }
+        
+        let priceIndex = item.lv
+        guard priceIndex < item.prices.count else { return }
+        let cost = item.prices[priceIndex]
+        
+        if coins >= cost {
+            coins -= cost
+            shopItems[index].lv += 1
+        }
+    }
+    func upgradeMaxHP() {
+        if coins >= 100 {
+            coins -= 100
+            maxHP += 1
+        }
+    }
 }
