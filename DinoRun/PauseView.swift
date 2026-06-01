@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PauseView: View {
     @Binding var currentGameState: GameState
-    @Binding var isPaused: Bool
+    @Environment(GameData.self) var gameData
     var onRestart: () -> Void
     
     var body: some View {
@@ -24,17 +24,17 @@ struct PauseView: View {
                 
                 HStack(spacing: 30) {
                     IconButton(iconName: "house.fill") {
-                        isPaused = false
+                        gameData.playingState = .nothing
                         currentGameState = .home
+                        gameData.save()
                     }
                     
                     IconButton(iconName: "arrow.clockwise") {
-                        isPaused = false
                         onRestart()
                     }
                     
                     IconButton(iconName: "play.fill") {
-                        isPaused = false
+                        gameData.playingState = .starting
                     }
                 }
             }

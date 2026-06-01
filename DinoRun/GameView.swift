@@ -11,9 +11,7 @@ import SpriteKit
 struct GameView: View {
     @Binding var currentGameState: GameState
     @Environment(GameData.self) var gameData
-    
-    @State private var isPaused = false
-    @State private var isGameOver = false
+
     @State private var coinsEarned = 0
     @State private var sceneID = UUID()
     
@@ -23,10 +21,18 @@ struct GameView: View {
         scene.gameData = gameData
         return scene
     }
+    
+    func isGameOver() -> Bool {
+        return gameData.playingState == .gameover
+    }
+    
+    func isPaused() -> Bool {
+        return gameData.playingState == .paused
+    }
 
     var body: some View {
         ZStack {
-            SpriteView(scene: scene, isPaused: isPaused || isGameOver)
+            SpriteView(scene: scene, isPaused: isPaused() || isGameOver())
                 .ignoresSafeArea()
                 .id(sceneID)
             
@@ -34,7 +40,7 @@ struct GameView: View {
                 HStack(alignment: .center) {
                     HStack(spacing: 15) {
                         Button(action: {
-                            isPaused = true
+                            gameData.playingState = .paused
                         }) {
                             Image(systemName: "pause.fill")
                                 .font(.system(size: 24))
@@ -58,7 +64,7 @@ struct GameView: View {
                     
                     Spacer()
                     
-                    MyText("\(gameData.currentScore) km", size: 40)
+                    MyText("\(gameData.currentScore) m", size: 40)
                         .padding(.vertical, 8)
                         .padding(.horizontal, 20)
                         .background(Color(white: 0.85))
@@ -70,32 +76,34 @@ struct GameView: View {
                 Spacer()
             }
             
-            if isPaused {
-                PauseView(currentGameState: $currentGameState, isPaused: $isPaused) {
+            if isPaused() {
+                PauseView(currentGameState: $currentGameState) {
                     resetGame()
-                }
+                }.environment(gameData)
             }
             
-            if isGameOver {
+            if isGameOver() {
                 GameOverView(
                     currentGameState: $currentGameState,
                     currentScore: gameData.currentScore,
                     coinsEarned: coinsEarned,
                     highScore: gameData.highScore
                 ) {
-                    resetGame()
+                    gameData.save()
+                    restartGame()
                 }
             }
         }
         .onChange(of: gameData.currentHP) { _, newValue in
-            if newValue <= 0 && !isGameOver {
-                coinsEarned = gameData.currentScore / 10
-                gameData.coins += coinsEarned
+            if newValue <= 0 && !isGameOver() {
                 if gameData.currentScore > gameData.highScore {
                     gameData.highScore = gameData.currentScore
                 }
-                isGameOver = true
+                gameData.playingState = .gameover
             }
+        }
+        .onChange(of: gameData.coins) { old, new in
+            coinsEarned += new - old
         }
         .onAppear {
             gameData.currentScore = 0
@@ -104,10 +112,15 @@ struct GameView: View {
     }
     
     private func resetGame() {
+        gameData.coins -= coinsEarned
+        coinsEarned = 0
+        restartGame()
+    }
+    
+    private func restartGame() {
         gameData.currentScore = 0
         gameData.currentHP = gameData.maxHP
-        isGameOver = false
-        isPaused = false
+        gameData.playingState = .playing
         sceneID = UUID()
     }
 }
@@ -152,4 +165,6 @@ struct ContentView: View {
 
 #Preview(traits: .landscapeLeft)  {
     ContentView()
+//    GameView(currentGameState: .constant(.playing))
+//        .environment(GameData())
 }

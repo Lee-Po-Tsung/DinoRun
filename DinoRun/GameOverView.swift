@@ -53,8 +53,9 @@ struct GameOverView: View {
                     .cornerRadius(10)
                     
                     VStack(spacing: 30) {
-                        Image(systemName: "tortoise.fill")
+                        Image("dinoDead")
                             .resizable()
+                            .interpolation(.none)
                             .scaledToFit()
                             .frame(height: 150)
                             .foregroundColor(Color(white: 0.6))
@@ -94,6 +95,6 @@ struct GameOverView: View {
     }
 }
 
-//#Preview(traits: .landscapeLeft) {
-//    GameOverView(currentGameState: .constant(.playing))
-//}
+#Preview(traits: .landscapeLeft) {
+    GameOverView(currentGameState: .constant(.playing), onAgain: {})
+}

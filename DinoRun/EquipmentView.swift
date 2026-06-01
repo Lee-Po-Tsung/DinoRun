@@ -14,16 +14,21 @@ struct EquipmentView: View {
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 40), count: 3)
     
+    var equipmentItems: [ShopItem] {
+        gameData.shopItems.filter { $0.category == .equipment }
+    }
+    
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            VStack {
+            VStack(spacing: 0) {
                 HeaderView("ITEM", currentGameState: $currentGameState)
                     .padding(.horizontal, 40)
                     .padding(.top, 20)
+                    .padding(.bottom, 20)
                 
-                HStack(spacing: 30) {
+                HStack(spacing: 0) {
                     VStack {
                         Text("ITEMS")
                             .font(.system(size: 36, weight: .bold, design: .monospaced))
@@ -31,13 +36,17 @@ struct EquipmentView: View {
                         
                         LazyVGrid(columns: columns, spacing: 40) {
                             ForEach(0..<6, id: \.self) { i in
-                                if i >= gameData.shopItems.count {
+                                if i >= equipmentItems.count {
                                     EmptyItemCard()
                                 } else {
-                                    ItemCard(item: gameData.shopItems[i], equipped: gameData.equippedItem, selected: i == selectedItem)
-                                        .onTapGesture {
-                                            selectedItem = i
-                                        }
+                                    ItemCard(
+                                        item: equipmentItems[i],
+                                        equipped: gameData.equippedItem,
+                                        selected: i == selectedItem
+                                    )
+                                    .onTapGesture {
+                                        selectedItem = i
+                                    }
                                 }
                             }
                         }
@@ -47,65 +56,87 @@ struct EquipmentView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .background(Color(white: 0.85))
-                    .cornerRadius(10)
-                    .shadow(radius: 3)
+                    .border(Color(white: 0.15), width: 8)
                     
-                    VStack(spacing: 15) {
-                        if selectedItem < gameData.shopItems.count {
-                            let itemDetails = gameData.shopItems[selectedItem]
+                    Rectangle().fill(Color(white: 0.15)).frame(width: 20)
+                    
+                    if selectedItem < equipmentItems.count {
+                        let itemDetails = equipmentItems[selectedItem]
+                        
+                        VStack {
                             Text("\(itemDetails.name) Lv.\(itemDetails.lv)")
-                                .font(.system(size: 32, weight: .bold, design: .monospaced))
+                                .font(.system(size: 40, weight: .bold, design: .monospaced))
+                                .padding(.top, 20)
                             
                             Image(itemDetails.imgName)
                                 .resizable()
                                 .interpolation(.none)
                                 .scaledToFit()
-                                .frame(height: 80)
+                                .frame(height: 180)
+                                .padding(.vertical, 10)
                             
+
                             Text(itemDetails.description)
-                                .font(.system(size: 14, design: .monospaced))
-                                .padding()
+                                .font(.system(size: 24, design: .monospaced))
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 30)
+                                .frame(height: 120, alignment: .topLeading)
                             
-                            ForEach(itemDetails.stats, id: \.self) { stat in
-                                Text(stat)
-                                    .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            VStack(alignment: .leading, spacing: 5) {
+                                ForEach(itemDetails.stats, id: \.self) { stat in
+                                    Text(stat)
+                                        .font(.system(size: 20, weight: .bold, design: .monospaced))
+                                        .foregroundColor(Color(white: 0.3))
+                                }
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(30)
+                            .frame(height: 60, alignment: .topLeading)
                             
                             Spacer()
                             
                             if itemDetails.lv == 0 {
                                 Text("LOCKED")
                                     .font(.system(size: 24, weight: .bold, design: .monospaced))
-                                    .frame(width: 200, height: 60)
+                                    .frame(width: 220, height: 60)
                                     .background(Color.gray)
                                     .foregroundColor(.white)
-                                    .cornerRadius(8)
+                                    .cornerRadius(5)
                             } else {
+                                let isEquipped = gameData.equippedItem == itemDetails.name
                                 Button(action: {
                                     if gameData.equippedItem == itemDetails.name {
                                         gameData.equippedItem = "None"
                                     } else {
                                         gameData.equippedItem = itemDetails.name
                                     }
+                                    gameData.save()
                                 }) {
-                                    Text(gameData.equippedItem == itemDetails.name ? "UNEQUIP" : "EQUIP")
+                                    Text(isEquipped ? "UNEQUIP" : "EQUIP")
                                         .font(.system(size: 24, weight: .bold, design: .monospaced))
-                                        .frame(width: 200, height: 60)
-                                        .background(Color.black)
+                                        .frame(width: 220, height: 60)
+                                        .background(isEquipped ? Color.black : Color.green)
                                         .foregroundColor(.white)
-                                        .cornerRadius(8)
+                                        .cornerRadius(5)
                                 }
                             }
+                            Spacer().frame(height: 30)
                         }
+                        .frame(width: 400)
+                        .background(Color(white: 0.85))
+                        .border(Color(white: 0.15), width: 8)
+                    } else {
+                        VStack {
+                            Spacer()
+                        }
+                        .frame(width: 400)
+                        .background(Color(white: 0.85))
+                        .border(Color(white: 0.15), width: 8)
                     }
-                    .padding(.top, 30)
-                    .frame(width: 350)
-                    .background(Color(white: 0.85))
-                    .cornerRadius(10)
-                    .shadow(radius: 3)
                 }
                 .padding(.horizontal, 40)
-                .padding(.bottom, 30)
+                .padding(.bottom, 20)
             }
         }
     }
@@ -124,28 +155,31 @@ struct ItemCard: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             Text("\(item.name) Lv.\(item.lv)")
                 .font(.system(size: 16, weight: .bold, design: .monospaced))
-                .padding(.top, 10)
+                .padding(.top, 15)
+            
+            Spacer()
             
             Image(item.imgName)
                 .resizable()
                 .scaledToFit()
-                .frame(height: 170)
-                .foregroundColor(.black)
+                .frame(height: 110)
                 .padding(.bottom, 5)
+            
+            Spacer()
 
             Text(status)
                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .frame(height: 25)
+                .frame(height: 35)
                 .background(status == "Equipped" ? Color(white: 0.3) : Color(white: 0.5))
         }
+        .frame(height: 220)
         .background(Color.white)
-        .border(selected ? Color.black : Color.clear, width: 3)
-        .shadow(radius: 2)
+        .border(selected ? Color.green : Color(white: 0.8), width: selected ? 5 : 2)
     }
 }
 
@@ -157,12 +191,12 @@ struct EmptyItemCard: View {
                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .frame(height: 25)
+                .frame(height: 35)
                 .background(Color(white: 0.7))
         }
-        .frame(height: 250)
+        .frame(height: 220)
         .background(Color(white: 0.9))
-        .shadow(radius: 1)
+        .border(Color(white: 0.8), width: 2)
     }
 }
 

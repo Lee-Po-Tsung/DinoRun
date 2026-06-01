@@ -15,3 +15,11 @@ enum GameState {
     case equipment  // 裝備頁面
     case settings   // 設定頁面
 }
+
+enum PlayingState {
+    case nothing
+    case starting
+    case playing
+    case paused
+    case gameover
+}
