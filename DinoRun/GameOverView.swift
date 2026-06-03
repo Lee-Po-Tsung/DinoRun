@@ -31,7 +31,7 @@ struct GameOverView: View {
                 
                 HStack(spacing: 40) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Score: \(currentScore)km")
+                        Text("Score: \(currentScore)m")
                             .font(.system(size: 28, weight: .bold, design: .monospaced))
                             .foregroundColor(.black)
                             .padding()
@@ -43,7 +43,7 @@ struct GameOverView: View {
                         
                         Divider().background(Color.black)
                         
-                        Text("High Score: \(highScore)km")
+                        Text("High Score: \(highScore)m")
                             .font(.system(size: 28, weight: .bold, design: .monospaced))
                             .foregroundColor(.black)
                             .padding()

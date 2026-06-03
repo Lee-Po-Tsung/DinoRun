@@ -23,7 +23,7 @@ struct EquipmentView: View {
             Color.white.ignoresSafeArea()
             
             VStack(spacing: 0) {
-                HeaderView("ITEM", currentGameState: $currentGameState)
+                HeaderView("ITEM", currentGameState: $currentGameState, coin: false)
                     .padding(.horizontal, 40)
                     .padding(.top, 20)
                     .padding(.bottom, 20)

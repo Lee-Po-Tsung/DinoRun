@@ -34,12 +34,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let collectibleCategory: UInt32 = 1 << 3
     
     private var runAnimation: SKAction!
-    private let jumpSound = SKAction.playSoundFileNamed("jump.wav", waitForCompletion: false)
-    private let dieSound = SKAction.playSoundFileNamed("die.wav", waitForCompletion: false)
-    private let riseSound = SKAction.playSoundFileNamed("rise.wav", waitForCompletion: false)
-    private let splatSound = SKAction.playSoundFileNamed("splat.wav", waitForCompletion: false)
-    private let coinSound = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
-    private let shootSound = SKAction.playSoundFileNamed("shoot.wav", waitForCompletion: false)
+//    private let jumpSound = SKAction.playSoundFileNamed("jump.wav", waitForCompletion: false)
+//    private let dieSound = SKAction.playSoundFileNamed("die.wav", waitForCompletion: false)
+//    private let riseSound = SKAction.playSoundFileNamed("rise.wav", waitForCompletion: false)
+//    private let splatSound = SKAction.playSoundFileNamed("splat.wav", waitForCompletion: false)
+//    private let coinSound = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
+//    private let shootSound = SKAction.playSoundFileNamed("shoot.wav", waitForCompletion: false)
     
     private var isShoeActive = false
     private var shoeTimer: TimeInterval = 0
@@ -64,6 +64,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         float brightness = (color.r + color.g + color.b) / 3.0;
         float newAlpha = (1.0 - brightness) * color.a;
         gl_FragColor = vec4(newAlpha, newAlpha, newAlpha, newAlpha);
+    }
+    """)
+    private let groundShader = SKShader(source: """
+    void main() {
+        vec4 color = SKDefaultShading();
+        float brightness = (color.r + color.g + color.b) / 3.0;
+        float newAlpha = (1.0 - brightness) * color.a;
+        gl_FragColor = vec4(0.0, 0.0, 0.0, newAlpha);
     }
     """)
     
@@ -200,7 +208,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             dino.removeAction(forKey: "run")
             dino.physicsBody?.velocity = CGVector(dx: 0, dy: 700)
             isJumping = true
-//            run(jumpSound)
+            gd.playSFX(named: "jump")
             if !isSkillReady {
                 currentJumpsSinceSkill += 1
                 if currentJumpsSinceSkill >= requiredJumpsForCD {
@@ -275,7 +283,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         moon.position.y += (targetMoonY - moon.position.y) * 0.1
         
         for ground in groundNodes {
-            ground.shader = isNight ? invertShader : nil
+            ground.shader = isNight ? invertShader : groundShader
             ground.position.x -= activeSpeed * CGFloat(deltaTime)
         }
         
@@ -487,6 +495,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         currentJumpsSinceSkill = 0
         
         if itemName == "Laser" {
+            gd.playSFX(named: "shoot")
             requiredJumpsForCD = gd.laserCDJumps
             isLaserActive = true
             let laserNode = SKSpriteNode(color: .cyan, size: CGSize(width: size.width, height: 30))
@@ -527,6 +536,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         switch itemName {
         case "heart":
+            gd.playSFX(named: "rise")
             if gd.currentHP < gd.maxHP {
                 gd.currentHP += 1
             }
@@ -534,6 +544,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             isShoeActive = true
             shoeTimer = gd.shoeDuration
         case "splat1":
+            gd.playSFX(named: "splat")
             splatNode?.removeFromParent()
             let randomSplat = "splat\(Int.random(in: 1...4))"
             let tex = SKTexture(imageNamed: randomSplat)
@@ -550,6 +561,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addChild(node)
             splatTimer = gd.splatDuration
         case "stick":
+            gd.playSFX(named: "rise")
             isStickActive = true
             stickDistance = 0
         default:
@@ -566,7 +578,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if obstacle?.parent != nil {
                 obstacle?.removeFromParent()
                 if !isShieldActive {
-//                    run(dieSound)
+                    gd.playSFX(named: "die")
                     if gd.currentHP > 0 {
                         gd.currentHP -= 1
                     }
@@ -578,6 +590,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let itemName = collectible?.name ?? ""
                 
                 if itemName == "coin" {
+                    gd.playSFX(named: "coin")
                     gd.coins += isShoeActive ? 2 : 1
                 } else {
                     if let itemColor = (collectible as? SKSpriteNode)?.color {

@@ -24,8 +24,8 @@ struct HeaderView: View {
     
     var body: some View {
         ZStack {
-            if returnBtn {
-                HStack {
+            HStack {
+                if returnBtn {
                     Button(action: { currentGameState = .home }) {
                         Image(systemName: "house.fill")
                             .font(.system(size: 50))
@@ -35,11 +35,13 @@ struct HeaderView: View {
                             .cornerRadius(8)
                     }
                     Spacer()
+                }
+                if coin {
                     coinV(num: gameData.coins, 50)
-                    .padding()
-                    .padding(.trailing, 20)
-                    .background(Color(white: 0.7))
-                    .cornerRadius(15)
+                        .padding()
+                        .padding(.trailing, 20)
+                        .background(Color(white: 0.7))
+                        .cornerRadius(15)
                 }
             }
             MyText(text, size: 100)

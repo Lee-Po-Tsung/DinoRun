@@ -113,11 +113,11 @@ struct GameView: View {
     
     private func resetGame() {
         gameData.coins -= coinsEarned
-        coinsEarned = 0
         restartGame()
     }
     
     private func restartGame() {
+        coinsEarned = 0
         gameData.currentScore = 0
         gameData.currentHP = gameData.maxHP
         gameData.playingState = .playing
@@ -160,6 +160,9 @@ struct ContentView: View {
         }
         .animation(.easeInOut, value: currentGameState)
         .environment(gameData)
+        .onAppear {
+            gameData.startBGM()
+        }
     }
 }
 

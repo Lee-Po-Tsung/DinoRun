@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Observation
+import AVFoundation
 
 enum ShopItemCategory: String, Codable {
     case equipment
@@ -35,6 +36,8 @@ struct GameSaveData: Codable {
     var highScore: Int
     var equippedItem: String
     var itemLevels: [String: Int]
+    var bgmVolume: Double?
+    var sfxVolume: Double?
 }
 
 @Observable
@@ -46,6 +49,17 @@ class GameData {
     var coins: Int = 150
     var highScore: Int = 0
     var equippedItem: String = "None"
+    
+    var bgmVolume: Double = 1.0 {
+        didSet {
+            bgmPlayer?.volume = Float(bgmVolume)
+        }
+    }
+    
+    var sfxVolume: Double = 1.0
+    
+    @ObservationIgnored var bgmPlayer: AVAudioPlayer?
+    @ObservationIgnored var sfxPlayers: [AVAudioPlayer] = []
     
     var shopItems: [ShopItem] = [
         ShopItem(
@@ -70,7 +84,7 @@ class GameData {
             statsBuilder: { lv in
                 let currentLv = max(1, lv)
                 let cd = max(20, 45 - (currentLv * 5))
-                let range = 80 + (currentLv * 70)
+                let range = 80 + (currentLv * 40)
                 return ["Clear Range: \(range)m", "Cooldown: \(cd) Jumps"]
             },
             maxLv: 5
@@ -126,6 +140,32 @@ class GameData {
         load()
     }
     
+    func startBGM() {
+        if let player = bgmPlayer, player.isPlaying { return }
+        bgmPlayer?.stop()
+        bgmPlayer = nil
+        guard let url = Bundle.main.url(forResource: "bgm", withExtension: "m4a") else { return }
+        do {
+            bgmPlayer = try AVAudioPlayer(contentsOf: url)
+            bgmPlayer?.numberOfLoops = -1
+            bgmPlayer?.volume = Float(bgmVolume)
+            bgmPlayer?.play()
+        } catch {}
+    }
+    
+    func playSFX(named name: String, ext: String = "wav") {
+        guard sfxVolume > 0 else { return }
+        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else { return }
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.volume = Float(sfxVolume)
+            player.play()
+            
+            sfxPlayers.append(player)
+            sfxPlayers.removeAll { !$0.isPlaying }
+        } catch {}
+    }
+    
     private func getLevel(for itemName: String) -> Int {
         return shopItems.first(where: { $0.name == itemName })?.lv ?? 0
     }
@@ -155,7 +195,9 @@ class GameData {
             coins: coins,
             highScore: highScore,
             equippedItem: equippedItem,
-            itemLevels: levelsDict
+            itemLevels: levelsDict,
+            bgmVolume: bgmVolume,
+            sfxVolume: sfxVolume
         )
         
         if let encoded = try? JSONEncoder().encode(saveData) {
@@ -170,6 +212,9 @@ class GameData {
             self.coins = decoded.coins
             self.highScore = decoded.highScore
             self.equippedItem = decoded.equippedItem
+            
+            if let savedBGM = decoded.bgmVolume { self.bgmVolume = savedBGM }
+            if let savedSFX = decoded.sfxVolume { self.sfxVolume = savedSFX }
             
             for (index, item) in shopItems.enumerated() {
                 if let savedLv = decoded.itemLevels[item.name] {

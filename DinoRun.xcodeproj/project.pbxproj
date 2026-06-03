@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52A385D42FCCFDE200304A41 /* jump.wav in Resources */ = {isa = PBXBuildFile; fileRef = 52A385CD2FCCFDE200304A41 /* jump.wav */; };
+		52A385D52FCCFDE200304A41 /* rise.wav in Resources */ = {isa = PBXBuildFile; fileRef = 52A385CE2FCCFDE200304A41 /* rise.wav */; };
+		52A385D62FCCFDE200304A41 /* coin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 52A385CF2FCCFDE200304A41 /* coin.wav */; };
+		52A385D72FCCFDE200304A41 /* bgm.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 52A385D02FCCFDE200304A41 /* bgm.m4a */; };
+		52A385D82FCCFDE200304A41 /* die.wav in Resources */ = {isa = PBXBuildFile; fileRef = 52A385D12FCCFDE200304A41 /* die.wav */; };
+		52A385D92FCCFDE200304A41 /* splat.wav in Resources */ = {isa = PBXBuildFile; fileRef = 52A385D22FCCFDE200304A41 /* splat.wav */; };
+		52A385DA2FCCFDE200304A41 /* shoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 52A385D32FCCFDE200304A41 /* shoot.wav */; };
 		52BB01B12FB8922300A15716 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 52BB01B02FB8922300A15716 /* Actions.sks */; };
 		52BB01B32FB8922300A15716 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BB01B22FB8922300A15716 /* GameScene.swift */; };
 		52BB01BA2FB8922500A15716 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52BB01B92FB8922500A15716 /* Assets.xcassets */; };
@@ -45,6 +52,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		52A385CD2FCCFDE200304A41 /* jump.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = jump.wav; sourceTree = "<group>"; };
+		52A385CE2FCCFDE200304A41 /* rise.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rise.wav; sourceTree = "<group>"; };
+		52A385CF2FCCFDE200304A41 /* coin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = coin.wav; sourceTree = "<group>"; };
+		52A385D02FCCFDE200304A41 /* bgm.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = bgm.m4a; sourceTree = "<group>"; };
+		52A385D12FCCFDE200304A41 /* die.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = die.wav; sourceTree = "<group>"; };
+		52A385D22FCCFDE200304A41 /* splat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = splat.wav; sourceTree = "<group>"; };
+		52A385D32FCCFDE200304A41 /* shoot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = shoot.wav; sourceTree = "<group>"; };
 		52BB01A92FB8922300A15716 /* DinoRun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DinoRun.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52BB01B02FB8922300A15716 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		52BB01B22FB8922300A15716 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -117,6 +131,13 @@
 		52BB01AB2FB8922300A15716 /* DinoRun */ = {
 			isa = PBXGroup;
 			children = (
+				52A385D02FCCFDE200304A41 /* bgm.m4a */,
+				52A385CF2FCCFDE200304A41 /* coin.wav */,
+				52A385D12FCCFDE200304A41 /* die.wav */,
+				52A385CD2FCCFDE200304A41 /* jump.wav */,
+				52A385D32FCCFDE200304A41 /* shoot.wav */,
+				52A385CE2FCCFDE200304A41 /* rise.wav */,
+				52A385D22FCCFDE200304A41 /* splat.wav */,
 				52BB01F52FB9F93800A15716 /* Info.plist */,
 				52BB01F32FB9F43D00A15716 /* Jersey25-Regular.ttf */,
 				52BB01B02FB8922300A15716 /* Actions.sks */,
@@ -258,7 +279,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52A385DA2FCCFDE200304A41 /* shoot.wav in Resources */,
+				52A385D72FCCFDE200304A41 /* bgm.m4a in Resources */,
+				52A385D92FCCFDE200304A41 /* splat.wav in Resources */,
+				52A385D52FCCFDE200304A41 /* rise.wav in Resources */,
+				52A385D42FCCFDE200304A41 /* jump.wav in Resources */,
 				52BB01F42FB9F62600A15716 /* Jersey25-Regular.ttf in Resources */,
+				52A385D62FCCFDE200304A41 /* coin.wav in Resources */,
+				52A385D82FCCFDE200304A41 /* die.wav in Resources */,
 				52BB01BA2FB8922500A15716 /* Assets.xcassets in Resources */,
 				52BB01B12FB8922300A15716 /* Actions.sks in Resources */,
 			);
